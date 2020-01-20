@@ -8,6 +8,6 @@
     <arg name="multi_robot_name" value="$(arg multi_robot_name)"/>
   </include>
 
-  <node name="rouler" pkg="franklin" type="rouler" output="screen"></node>
+  <node name="destination" pkg="franklin" type="destination" output="screen"></node>
 
 </launch>

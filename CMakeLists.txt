@@ -129,6 +129,14 @@ add_executable(rouler src/rouler.cpp)
 add_dependencies(rouler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(rouler ${catkin_LIBRARIES})
 
+add_executable(destination src/destination.cpp)
+add_dependencies(destination ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(destination ${catkin_LIBRARIES})
+
+add_executable(odometrie src/odometrie.cpp)
+add_dependencies(odometrie ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(odometrie ${catkin_LIBRARIES})
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
