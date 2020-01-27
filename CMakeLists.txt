@@ -129,13 +129,19 @@ add_executable(rouler src/rouler.cpp)
 add_dependencies(rouler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(rouler ${catkin_LIBRARIES})
 
-add_executable(destination src/destination.cpp)
-add_dependencies(destination ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(destination ${catkin_LIBRARIES})
+add_executable(frkl_curvetraj src/frkl_curvetraj.cpp)
+add_dependencies(frkl_curvetraj ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(frkl_curvetraj ${catkin_LIBRARIES})
 
 add_executable(odometrie src/odometrie.cpp)
 add_dependencies(odometrie ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(odometrie ${catkin_LIBRARIES})
+
+add_executable(frkl_fasttraj src/frkl_fasttraj.cpp)
+add_dependencies(frkl_fasttraj ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(frkl_fasttraj ${catkin_LIBRARIES})
+
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
