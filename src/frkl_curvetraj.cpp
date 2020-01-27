@@ -40,6 +40,7 @@ const double PI = 3.14159265358979323846;
 
 bool working = false;
 int state = 0;
+double initial_path_distance = 1;
 
 void dest_Callback(const geometry_msgs::Pose2D pose2D){
     ROS_INFO("Demande de destination \n- x=%0.2f\n- y=%0.2f\n- theta=%0.2f", pose2D.x, pose2D.y, pose2D.theta);
@@ -51,6 +52,7 @@ void dest_Callback(const geometry_msgs::Pose2D pose2D){
     initT = realT;
     working = true;
     state = 0;
+    initial_path_distance = sqrt((targetX - realX)*(targetX - realX)  + (targetY - realY)*(targetY - realY));
 }
 
 void odom_Callback(const nav_msgs::Odometry odom){
@@ -76,14 +78,20 @@ void odom_Callback(const nav_msgs::Odometry odom){
     //ROS_INFO("LECTURE ODOM \n- %0.2f\n- %0.2f\n- %0.2f", realX, realY, realT);
 }
 
+void pubPercentage(float value){
+  std_msgs::Float32 msg;
+  msg.data = value;
+  info_pub.publish(msg);
+}
+
 int main(int argc, char** argv) {
 
-    ros::init(argc, argv, "frkl_fasttraj");
+    ros::init(argc, argv, "frkl_curvetraj");
     ros::NodeHandle n;
 
     //pubs
     cmd_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
-    info_pub = n.advertise<std_msgs::Float32>("info_dest", 1);
+    info_pub = n.advertise<std_msgs::Float32>("f_info_dest", 1);
 
     //subs
     ros::Subscriber dest_sub = n.subscribe("destination", 1, dest_Callback);
@@ -115,6 +123,9 @@ int main(int argc, char** argv) {
             path_distance = sqrt((targetX - posX)*(targetX - posX)  + (targetY - posY)*(targetY - posY));
             twist.linear.x = std::min(linear_speed*path_distance, BURGER_MAX_LIN_VEL);
             ROS_INFO("Path distance : \n-S %0.2f\n-PD %0.2f", twist.linear.x, path_distance);
+
+            if(initial_path_distance != 0)
+              pubPercentage( 1 - path_distance/initial_path_distance);
 
             if(path_distance <= 0.06){
               state = 2;

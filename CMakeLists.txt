@@ -125,17 +125,17 @@ include_directories(
 #   src/${PROJECT_NAME}/franklin.cpp
 # )
 
-add_executable(rouler src/rouler.cpp)
-add_dependencies(rouler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(rouler ${catkin_LIBRARIES})
+add_executable(frkl_ctrl src/frkl_ctrl.cpp)
+add_dependencies(frkl_ctrl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(frkl_ctrl ${catkin_LIBRARIES})
 
 add_executable(frkl_curvetraj src/frkl_curvetraj.cpp)
 add_dependencies(frkl_curvetraj ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(frkl_curvetraj ${catkin_LIBRARIES})
 
-add_executable(odometrie src/odometrie.cpp)
-add_dependencies(odometrie ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(odometrie ${catkin_LIBRARIES})
+add_executable(frkl_avoidobj src/frkl_avoidobj.cpp)
+add_dependencies(frkl_avoidobj ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(frkl_avoidobj ${catkin_LIBRARIES})
 
 add_executable(frkl_fasttraj src/frkl_fasttraj.cpp)
 add_dependencies(frkl_fasttraj ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -11,7 +11,7 @@ void ctrl_Callback(const std_msgs::String msg){
 
 int main(int argc, char** argv) {
 
-    ros::init(argc, argv, "odometrie");
+    ros::init(argc, argv, "frkl_avoidobj");
     ros::NodeHandle n;
 
     joint_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
