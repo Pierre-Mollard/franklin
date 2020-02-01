@@ -8,13 +8,16 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose2D.h>
 #include <nav_msgs/Odometry.h>
+#include <turtlebot3_msgs/Sound.h>
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
 #include <algorithm>
+#include <std_msgs/Bool.h>
 
 ros::Publisher cmd_pub;
 ros::Publisher info_pub;
+ros::Publisher sound_pub;
 
 double targetX = 1;
 double targetY = 1;
@@ -42,6 +45,24 @@ bool working = false;
 int state = 0;
 double initial_path_distance = 1;
 
+void pubPercentage(float value){
+  std_msgs::Float32 msg;
+  msg.data = value;
+  info_pub.publish(msg);
+}
+
+void stop_Callback(const std_msgs::Bool b){
+  working = false;
+  geometry_msgs::Twist twist;
+  twist.angular.z = 0;
+  twist.linear.x = 0;
+  cmd_pub.publish(twist);
+
+  turtlebot3_msgs::Sound msg;
+  msg.value = 3;
+  sound_pub.publish(msg);
+}
+
 void dest_Callback(const geometry_msgs::Pose2D pose2D){
     ROS_INFO("Demande de destination \n- x=%0.2f\n- y=%0.2f\n- theta=%0.2f", pose2D.x, pose2D.y, pose2D.theta);
     targetX = pose2D.x;
@@ -53,53 +74,14 @@ void dest_Callback(const geometry_msgs::Pose2D pose2D){
     working = true;
     state = 0;
     initial_path_distance = sqrt((targetX - realX)*(targetX - realX)  + (targetY - realY)*(targetY - realY));
-}
 
-void odom_Callback(const nav_msgs::Odometry odom){
-  /** TODO : CAMERA : get data from frkl_poscalc node**/
-
-    // linear position
-    realX = odom.pose.pose.position.x;
-    realY = odom.pose.pose.position.y;
-
-    // quaternion to RPY conversion
-    tf::Quaternion q(
-        odom.pose.pose.orientation.x,
-        odom.pose.pose.orientation.y,
-        odom.pose.pose.orientation.z,
-        odom.pose.pose.orientation.w);
-    tf::Matrix3x3 m(q);
-    double roll, pitch, yaw;
-    m.getRPY(roll, pitch, yaw);
-
-    // angular position
-    realT = yaw;
-
-    //ROS_INFO("LECTURE ODOM \n- %0.2f\n- %0.2f\n- %0.2f", realX, realY, realT);
-}
-
-void pubPercentage(float value){
-  std_msgs::Float32 msg;
-  msg.data = value;
-  info_pub.publish(msg);
-}
-
-int main(int argc, char** argv) {
-
-    ros::init(argc, argv, "frkl_curvetraj");
-    ros::NodeHandle n;
-
-    //pubs
-    cmd_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
-    info_pub = n.advertise<std_msgs::Float32>("f_info_dest", 1);
-
-    //subs
-    ros::Subscriber dest_sub = n.subscribe("destination", 1, dest_Callback);
-    ros::Subscriber odom_sub = n.subscribe("odom", 1, odom_Callback);
+    turtlebot3_msgs::Sound msg;
+    msg.value = 1;
+    sound_pub.publish(msg);
 
     ros::Rate loop_rate(10);
 
-    while(1){
+    while(working){
         ros::spinOnce();
         if(working){
           double path_distance = sqrt((targetX - realX)*(targetX - realX)  + (targetY - realY)*(targetY - realY));
@@ -151,6 +133,9 @@ int main(int argc, char** argv) {
             twist.linear.x = 0;
             state = 4;
             working = false;
+            turtlebot3_msgs::Sound msg;
+            msg.value = 0;
+            sound_pub.publish(msg);
           }
 
           cmd_pub.publish(twist);
@@ -158,6 +143,47 @@ int main(int argc, char** argv) {
 
         loop_rate.sleep();
   }
+}
+
+void odom_Callback(const nav_msgs::Odometry odom){
+  /** TODO : CAMERA : get data from frkl_poscalc node**/
+
+    // linear position
+    realX = odom.pose.pose.position.x;
+    realY = odom.pose.pose.position.y;
+
+    // quaternion to RPY conversion
+    tf::Quaternion q(
+        odom.pose.pose.orientation.x,
+        odom.pose.pose.orientation.y,
+        odom.pose.pose.orientation.z,
+        odom.pose.pose.orientation.w);
+    tf::Matrix3x3 m(q);
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+
+    // angular position
+    realT = yaw;
+
+    //ROS_INFO("LECTURE ODOM \n- %0.2f\n- %0.2f\n- %0.2f", realX, realY, realT);
+}
+
+int main(int argc, char** argv) {
+
+    ros::init(argc, argv, "frkl_curvetraj");
+    ros::NodeHandle n;
+
+    //pubs
+    cmd_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+    info_pub = n.advertise<std_msgs::Float32>("f_info_dest", 1);
+    sound_pub = n.advertise<turtlebot3_msgs::Sound>("sound", 1);
+
+    //subs
+    ros::Subscriber dest_sub = n.subscribe("destination", 1, dest_Callback);
+    ros::Subscriber odom_sub = n.subscribe("odom", 1, odom_Callback);
+    ros::Subscriber stop_sub = n.subscribe("destination/stop", 1, stop_Callback);
+
+    ros::spin();
 
     return 0;
 }
