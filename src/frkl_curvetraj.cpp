@@ -58,6 +58,8 @@ void stop_Callback(const std_msgs::Bool b){
   twist.linear.x = 0;
   cmd_pub.publish(twist);
 
+  ROS_INFO("EMERG STOP");
+
   turtlebot3_msgs::Sound msg;
   msg.value = 3;
   sound_pub.publish(msg);
