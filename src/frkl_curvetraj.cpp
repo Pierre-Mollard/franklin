@@ -52,17 +52,22 @@ void pubPercentage(float value){
 }
 
 void stop_Callback(const std_msgs::Bool b){
-  working = false;
-  geometry_msgs::Twist twist;
-  twist.angular.z = 0;
-  twist.linear.x = 0;
-  cmd_pub.publish(twist);
+  if(b.data){
+    working = false;
+    geometry_msgs::Twist twist;
+    twist.angular.z = 0;
+    twist.linear.x = 0;
+    cmd_pub.publish(twist);
 
-  ROS_INFO("EMERG STOP");
+    ROS_INFO("EMERG STOP");
 
-  turtlebot3_msgs::Sound msg;
-  msg.value = 3;
-  sound_pub.publish(msg);
+    turtlebot3_msgs::Sound msg;
+    msg.value = 3;
+    sound_pub.publish(msg);
+  }else{
+    
+  }
+
 }
 
 void dest_Callback(const geometry_msgs::Pose2D pose2D){

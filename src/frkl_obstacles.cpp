@@ -57,14 +57,16 @@ int main(int argc, char** argv) {
 
 	  while (ros::ok())
 	  {
-
+        std_msgs::Bool col_msg;
       	if (minimum <= 2*SAFE_STOP_DISTANCE){
-          std_msgs::Bool col_msg;
+
           col_msg.data = true;
           ctrl_pub.publish(col_msg);
-      	  ROS_INFO("Distance of the obstacle : %f", minimum);
+      	  ROS_INFO("Distance de l'obstacle : %f", minimum);
       	}else{
-          ROS_INFO("No obstacle");
+          col_msg.data = false;
+          ctrl_pub.publish(col_msg);
+      	  ROS_INFO("Pas d'obstacle, le plus près : %f", minimum);
         }
 
 
