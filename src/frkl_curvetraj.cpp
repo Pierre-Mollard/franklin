@@ -65,7 +65,7 @@ void stop_Callback(const std_msgs::Bool b){
     msg.value = 3;
     sound_pub.publish(msg);
   }else{
-    
+
   }
 
 }
@@ -85,6 +85,8 @@ void dest_Callback(const geometry_msgs::Pose2D pose2D){
     turtlebot3_msgs::Sound msg;
     msg.value = 1;
     sound_pub.publish(msg);
+    
+    pubPercentage(0);
 
     ros::Rate loop_rate(10);
 
@@ -142,6 +144,7 @@ void dest_Callback(const geometry_msgs::Pose2D pose2D){
             working = false;
             turtlebot3_msgs::Sound msg;
             msg.value = 0;
+            pubPercentage(1);
             sound_pub.publish(msg);
           }
 
