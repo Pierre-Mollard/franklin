@@ -36,7 +36,7 @@ void get_scan(const sensor_msgs::LaserScan scan){
 
   minimum = 3.5;
 	for (int i =0; i < scan_filter.size(); i++){
-		if(scan_filter[i] <= minimum){
+		if(scan_filter[i] <= minimum && scan_filter[i] >= 0.1){
 			minimum = scan_filter[i];
 		}
 	}
